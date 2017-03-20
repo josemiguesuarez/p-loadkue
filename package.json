@@ -1,0 +1,27 @@
+{
+  "name": "p-loadkue",
+  "version": "1.0.0",
+  "description": "p-loadkue is a module to limit the number of promises running concurrently and limit the number of them in queue. It allow you to create great things without worrying about scheduling your promises to meet your scalability requirements.",
+  "main": "p-loadkue.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/josemiguesuarez/p-loadkue.git"
+  },
+  "keywords": [
+    "queue",
+    "load",
+    "schedule",
+    "kue",
+    "promise",
+    "in-memory"
+  ],
+  "author": "José Miguel Suárez Lopera",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/josemiguesuarez/p-loadkue/issues"
+  },
+  "homepage": "https://github.com/josemiguesuarez/p-loadkue#readme"
+}
