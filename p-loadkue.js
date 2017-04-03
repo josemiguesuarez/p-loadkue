@@ -16,10 +16,17 @@ function createQueue(params) {
     self.name = params.name || ("Queue" + queues.length);
     self.queue = [];
     self.running = 0;
+    onLimitExceededCallbacks = [];
+    onQueueChangeCallbacks = [];
 
     function push(callback) {
         if (!callback) return Promise.reject(new Error(UNDEFINED_CALLBACK_FUNCTION));
-        if (typeof(self.limit) === 'number' && self.queue.length >= self.limit) return Promise.reject(new Error(LIMIT_EXCEEDED));
+        if (typeof (self.limit) === 'number' && self.queue.length >= self.limit) {
+            onLimitExceededCallbacks.forEach(function (callback) {
+                callback();
+            });
+            return Promise.reject(new Error(LIMIT_EXCEEDED));
+        }
         var resolverInstance = resolver();
 
 
@@ -44,6 +51,9 @@ function createQueue(params) {
             }
 
         }
+        onQueueChangeCallbacks.forEach(function (callback) {
+            callback(self.queue.length);
+        });
         //self.printStatus();
     }
 
@@ -62,13 +72,23 @@ function createQueue(params) {
         change();
     }
 
-    self.printStatus = function() {
+    self.printStatus = function () {
         var limitString = self.limit ? " (limit: " + self.limit + ") " : "";
         console.log("QUEUE (" + self.name + "):\t running " + self.running + "\t of " + self.concurrent + "\t concurrent and there are " + self.queue.length + "\t in queue" + limitString + ".");
     };
 
+    function onLimitExceeded(callback) {
+        onLimitExceededCallbacks.push(callback);
+    }
+
+    function onQueueChange(callback) {
+        onQueueChangeCallbacks.push(callback);
+    }
+
     return {
         push: push,
+        onLimitExceeded: onLimitExceeded,
+        onQueueChange: onQueueChange,
         printStatus: self.printStatus
     };
 }
@@ -99,5 +119,6 @@ function resolver() {
 module.exports = {
     LIMIT_EXCEEDED: LIMIT_EXCEEDED,
     UNDEFINED_CALLBACK_FUNCTION: UNDEFINED_CALLBACK_FUNCTION,
+    queues: queues,
     createQueue: createQueue
 };
